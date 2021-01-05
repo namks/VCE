@@ -196,13 +196,6 @@ system.time({
 # 10~11 min for 1485 phenotypes
 ```
 
-```{r}
-sigmas.score[1:10]
-sigmas.score.temp[1:10]
-sigmas.mom[1:10]
-```
-
-
 # Compare results
 
 ```{r}
