@@ -249,16 +249,3 @@ coeff_mom <- moment_reg$coefficients
 coeff_mom
 plot(kinship$value, eiej)
 ```
-
-
-```{r}
-
-```
-
-
-
-
-
-
-
-
