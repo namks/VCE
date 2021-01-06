@@ -1,0 +1,76 @@
+---
+title: "Correlation Data Preprocessing"
+output: html_notebook
+---
+
+# Read Data
+
+```{r}
+all <- read.csv("all.txt", header=T, sep="")
+white_british <- read.csv("PEDMASTER_UNRELATED_WhiteBritish_20180612_v2.txt", header=T, sep=",")
+file_list <- read.csv("list_25753.txt", header=F, sep="")
+mapping <- read.csv("mapping.csv", header=T, sep=",")
+```
+
+# Mapping
+
+```{r}
+library(dplyr)
+all <- left_join(all, mapping, by=c("FID" = "Goncalo"))
+white_british <- left_join(white_british, mapping, by=c("IID" = "Goncalo"))
+```
+
+# File List
+
+```{r}
+file_list$V1 <- substr(file_list$V9, 1, 7)
+file_list$V2 <- substr(file_list$V9, 9, 15)
+nrow(file_list)
+```
+
+# Remove redundant samples (repeated measure)
+
+```{r}
+file_list_first_only <- file_list[file_list$V2 == "25753_2",]
+nrow(file_list_first_only)
+```
+
+# Remove missing IID (No mapping information)\
+
+```{r}
+file_list_first_only$V1 <- as.numeric(file_list_first_only$V1)
+file_list_first_only <- left_join(file_list_first_only, all, by=c("V1" = "Shawn"))
+file_list_remove_missing <- file_list_first_only[is.na(file_list_first_only$FID) == F,]
+# There is no "1004720" in mapping.csv
+nrow(file_list_remove_missing)
+```
+
+# Filter White British samples
+
+```{r}
+file_list_remove_missing <- file_list_remove_missing[,1:2]
+file_list_remove_missing <- left_join(file_list_remove_missing, white_british, by=c("V1" = "Shawn"))
+file_list_wb_only <- file_list_remove_missing[is.na(file_list_remove_missing$Sex) == F,]
+nrow(file_list_wb_only)
+```
+
+# Delete unnecessary columns and write file
+
+```{r}
+out <- file_list_wb_only[,-c(2, 3, 5, 16, 17, 18, 19)]
+write.table(out, "out_25753.txt", row.names=F, quote=T)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
